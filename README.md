@@ -28,7 +28,15 @@ A galaxy-level shipment dashboard for the fictional interstellar logistics compa
 - **Backend**: Django + Django REST Framework  
 - **ETL & Scheduling**: APScheduler  
 - **Database**: PostgreSQL
-- **Frontend**: Django templates  
+- **Frontend**: Django templates
+
+---
+## 🧰 Prerequisites
+
+- 🐍 [Python 3.8+](https://www.python.org/downloads/)
+- 🐳 [Docker & Docker Compose](https://docs.docker.com/get-docker/)
+- 🎭 [Playwright](https://playwright.dev/python/docs/intro) (`playwright install`)
+- ⚙️ `pip`, `venv`, and Git
 
 
 ---
@@ -85,7 +93,7 @@ The app uses APScheduler to ingest shipment data from the CosmoCargo API every 3
 
 Scheduler is configured in shipments/tasks.py
 Automatically runs on Django app startup
-To customize the interval, adjust this line 48 in tasks.py:
+To customize the interval, adjust [this line](https://github.com/rohanmandhanya/txr-cosmo/blob/de92482e356ffdc55759d13fc1c50ba95686bf5c/shipments/tasks.py#L48) in tasks.py:
 
 ```python
 # Every 15 minutes (default)
