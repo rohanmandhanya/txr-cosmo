@@ -45,5 +45,5 @@ def fetch_and_store_shipments():
 
 def start_scheduler():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(fetch_and_store_shipments, 'interval', minutes=3)
+    scheduler.add_job(fetch_and_store_shipments, 'interval', minutes=30)
     scheduler.start()
