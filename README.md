@@ -7,7 +7,7 @@ A galaxy-level shipment dashboard for the fictional interstellar logistics compa
 ## ✨ Features
 
 - **Live Data Ingestion**  
-  Scheduled ETL from the CosmoCargo shipments API every 15 minutes.
+  Scheduled ETL from the CosmoCargo shipments API every 30 minutes.
 
 - **Clean Data Modeling**  
   Relational schema with normalized `Location`, `WeatherForecast`, and `Shipment` models.
