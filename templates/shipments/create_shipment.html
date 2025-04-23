@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Shipment</title>
+</head>
+<body>
+    <h1>+ New Shipment</h1>
+    <form method="post">
+        {% csrf_token %}
+
+        <fieldset>
+            <legend>Shipment Info</legend>
+            {{ shipment_form.as_p }}
+        </fieldset>
+
+        <button type="submit">Create</button>
+    </form>
+    <p><a href="{% url 'shipment-dashboard' %}">← Back to Dashboard</a></p>
+</body>
+</html>

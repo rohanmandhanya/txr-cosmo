@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CosmoCargo Dashboard</title>
+</head>
+<body>
+    <h1>🚀 CosmoCargo Shipments</h1>
+
+    <p>
+        <a href="{% url 'create-shipment' %}" style="background: #4CAF50; color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">
+            ➕ Add New Shipment
+        </a>
+    </p>
+
+    <form method="get">
+        <input type="text" name="search" placeholder="Search address..." value="{{ request.GET.search }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <table border="1" cellpadding="5">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Status</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Weight (kg)</th>
+                <th>Volume (m3)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for shipment in shipments %}
+            <tr>
+                <td>{{ shipment.shipment_time }}</td>
+                <td>{{ shipment.status }}</td>
+                <td>{{ shipment.origin }}</td>
+                <td>{{ shipment.destination }}</td>
+                <td>{{ shipment.weight_kg }}</td>
+                <td>{{ shipment.volume_m3 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- <p><a href="{% url 'create-shipment' %}">+ Add Shipment</a></p> -->
+</body>
+</html>
