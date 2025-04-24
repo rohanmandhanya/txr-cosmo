@@ -18,6 +18,11 @@ services:
     volumes:
       - ./postgresql-data:/var/lib/postgresql/data
 
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
   cosmo_cargo:
     build: .
     container_name: cosmo_cargo
@@ -28,11 +33,57 @@ services:
     depends_on:
       cosmo_db:
         condition: service_healthy
+      redis:
+        condition: service_started
     command: >
       sh -c "
       python manage.py migrate &&
       python manage.py runserver 0.0.0.0:8000
       "
+    environment:
+      POSTGRES_DB: cargo
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_HOST: cosmo_db
+      POSTGRES_PORT: 5432
+      DEBUG: "1"
+      DJANGO_SETTINGS_MODULE: cosmo_cargo.settings
+
+  celery:
+    build: .
+    container_name: celery_worker
+    command: celery -A cosmo_cargo worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      cosmo_db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      POSTGRES_DB: cargo
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_HOST: cosmo_db
+      POSTGRES_PORT: 5432
+      DEBUG: "1"
+      DJANGO_SETTINGS_MODULE: cosmo_cargo.settings
+
+  celery_beat:
+    build: .
+    container_name: celery_beat
+    command: >
+      sh -c "
+      python manage.py migrate django_celery_beat &&
+      celery -A cosmo_cargo beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+      "
+    volumes:
+      - .:/app
+    depends_on:
+      cosmo_db:
+        condition: service_healthy
+      redis:
+        condition: service_started
     environment:
       POSTGRES_DB: cargo
       POSTGRES_USER: root

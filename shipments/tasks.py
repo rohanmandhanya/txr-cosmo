@@ -1,12 +1,15 @@
 import requests
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
+from celery import shared_task
 
 
 from shipments.models import Shipment, Location, WeatherForecast
 from shipments.utils import fetch_shipments_with_js
 
 
+
+@shared_task
 def fetch_and_store_shipments():
     shipments = fetch_shipments_with_js()
 
@@ -41,9 +44,3 @@ def fetch_and_store_shipments():
             weather=weather
         )
 
-
-
-def start_scheduler():
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(fetch_and_store_shipments, 'interval', minutes=30)
-    scheduler.start()

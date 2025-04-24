@@ -1,2 +1,2 @@
-# from cosmo_cargo.celery import app as celery_app
-# __all__ = ('celery_app',)
+from cosmo_cargo.celery import app as celery_app
+__all__ = ('celery_app',)
