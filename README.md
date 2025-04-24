@@ -37,6 +37,7 @@ A galaxy-level shipment dashboard for the fictional interstellar logistics compa
 - 🐳 [Docker & Docker Compose](https://docs.docker.com/get-docker/)
 - 🎭 [Playwright](https://playwright.dev/python/docs/intro) (`playwright install`)
 - ⚙️ `pip`, `venv`, and Git
+- 🧱 [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/archive/install-redis/)
 
 
 ---
@@ -77,11 +78,28 @@ A galaxy-level shipment dashboard for the fictional interstellar logistics compa
     ```
     playwright install
     ```
+    
+    #### e. Start Redis Server
+    ```
+    redis-server
+    ```
+    *May have to change [CELERY_BROKER_URL](https://github.com/rohanmandhanya/txr-cosmo/blob/6cf58dc85908080d9794f9920fe77f3de37299bc/cosmo_cargo/settings.py#L141) settings from `redis://redis:6379/0` to `redis://localhost:6379/0`*
 
     #### e. Run the Django development server
     ```
     python manage.py runserver
     ```
+
+    #### f. Start Celery Worker
+    ```
+    celery -A core worker --loglevel=info
+    ```
+
+    #### j. Start Celery Beat (Optional: for scheduled tasks)
+    ```
+    celery -A core beat --loglevel=info
+    ```
+
 
     The web app will be exposed on port 8000, and the endpoints will be accessible at http://localhost:8000/dashboard
 
@@ -89,20 +107,21 @@ A galaxy-level shipment dashboard for the fictional interstellar logistics compa
 
 ## 📆 Scheduled Ingestion
 
-The app uses APScheduler to ingest shipment data from the CosmoCargo API every 30 minutes.
+The app uses Celery-Beat to ingest shipment data from the CosmoCargo API every 30 minutes.
 
-Scheduler is configured in shipments/tasks.py
+Scheduler is configured in shipments/apps.py
 Automatically runs on Django app startup
-To customize the interval, adjust [this line](https://github.com/rohanmandhanya/txr-cosmo/blob/de92482e356ffdc55759d13fc1c50ba95686bf5c/shipments/tasks.py#L48) in tasks.py:
+To customize the interval, adjust [this line](https://github.com/rohanmandhanya/txr-cosmo/blob/6cf58dc85908080d9794f9920fe77f3de37299bc/shipments/apps.py#L14) in apps.py:
+
+Can also read about celery beat interval [here](https://django-celery-beat.readthedocs.io/en/latest/#example-creating-interval-based-periodic-task) on how to set or change intervals
 
 ```python
 # Every 15 minutes (default)
-scheduler.add_job(fetch_and_store_shipments, 'interval', minutes=15)
+schedule, _ = IntervalSchedule.objects.get_or_create(every=30,period=IntervalSchedule.MINUTES)
 
 # Alternatives:
-# scheduler.add_job(fetch_and_store_shipments, 'interval', minutes=5)
-# scheduler.add_job(fetch_and_store_shipments, 'interval', seconds=30)
-# scheduler.add_job(fetch_and_store_shipments, 'interval', hours=1)
+# schedule, _ = IntervalSchedule.objects.get_or_create(every=30,period=IntervalSchedule.SECONDS)
+# schedule, _ = IntervalSchedule.objects.get_or_create(every=3,period=IntervalSchedule.HOURS)
 ```
 
 ---
