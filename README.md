@@ -131,3 +131,4 @@ schedule, _ = IntervalSchedule.objects.get_or_create(every=30,period=IntervalSch
 - Unit test and integration test
 - Add Logger
 - Celery Beat can be used for distrbuted system
+- Add Fragments in [Docker Compose](https://docs.docker.com/reference/compose-file/fragments/#example-4)
